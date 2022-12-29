@@ -16,9 +16,10 @@ fun AccountListScreen(
 ) {
     val context = LocalContext.current
     val accounts: List<Account> by remember {
-        mutableStateOf(AccountManager.get(context)
-            .getAccountsByType("com.ustadmobile")
-            .toList())
+        mutableStateOf(
+            AccountManager.get(context)
+                .getAccountsByType("com.ustadmobile")
+                .toList())
     }
 
     Column {
@@ -31,6 +32,4 @@ fun AccountListScreen(
             }
         }
     }
-
-
 }
