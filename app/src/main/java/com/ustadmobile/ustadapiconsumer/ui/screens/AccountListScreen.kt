@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
+@Deprecated("Not using accountmanager for this anymore")
 fun AccountListScreen(
     onClickAccount: (Account) -> Unit = {},
 ) {
@@ -26,7 +27,6 @@ fun AccountListScreen(
         Text("Accounts")
 
         accounts.forEach { account ->
-            AccountManager.get(context).getUserData(account, "Key_Pic")
             TextButton(onClick = { onClickAccount(account) }) {
                 Text(account.name)
             }
