@@ -10,7 +10,9 @@ data class GetTokenResult(
     val resultCode: Int,
     val accountName: String?,
     val accountType: String?,
-    val authToken: String?
+    val authToken: String?,
+    val sourcedId: String?,
+    val endpointUrl: String?,
 )
 
 class GetOfflineAuthActivityResultContract: ActivityResultContract<String?, GetTokenResult>() {
@@ -26,7 +28,10 @@ class GetOfflineAuthActivityResultContract: ActivityResultContract<String?, GetT
         val addedName = intent?.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
         val addedType = intent?.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE)
         val authToken = intent?.getStringExtra(AccountManager.KEY_AUTHTOKEN)
+        val sourcedId = intent?.getStringExtra("sourcedId")
+        val endpointUrl = intent?.getStringExtra("endpointUrl")
 
-        return GetTokenResult(resultCode, addedName, addedType, authToken)
+        return GetTokenResult(resultCode, addedName, addedType, authToken, sourcedId,
+            endpointUrl)
     }
 }

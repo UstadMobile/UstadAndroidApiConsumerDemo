@@ -10,6 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        maven {
+            url "https://devserver3.ustadmobile.com/maven2"
+        }
     }
 }
 rootProject.name = "UstadApiConsumer"
