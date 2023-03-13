@@ -11,6 +11,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,6 +21,7 @@ import com.ustadmobile.httpoveripc.core.ext.asSimpleTextResponse
 import com.ustadmobile.ustadapiconsumer.GetOfflineAuthActivityResultContract
 import com.ustadmobile.ustadapiconsumer.GetTokenResult
 import com.ustadmobile.ustadapiconsumer.IpcClientBindActivity
+import com.ustadmobile.ustadapiconsumer.util.ext.copyClickable
 import com.ustadmobile.ustadapiconsumer.util.ext.getActivityContext
 import io.ktor.http.*
 import kotlinx.coroutines.launch
@@ -30,6 +33,10 @@ fun StartScreen(
     onClickAccountList: () -> Unit = {},
 ) {
     val context = LocalContext.current
+
+    val ipcActivity = (context.getActivityContext() as IpcClientBindActivity)
+
+    val clientPort: Int by ipcActivity.httpPort.collectAsState(initial = 0)
 
     var tokenResult: GetTokenResult? by rememberSaveable {
         mutableStateOf(null)
@@ -54,9 +61,48 @@ fun StartScreen(
 
     val scope = rememberCoroutineScope()
 
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
     Column {
-        Text("Token: ${tokenResult?.authToken}")
-        Text("Account name: ${tokenResult?.accountName}")
+        Text(
+            text ="Token: ${tokenResult?.authToken}",
+            modifier = Modifier
+                .copyClickable(tokenResult?.authToken ?:"", clipboardManager, context)
+                .fillMaxWidth()
+                .padding(16.dp, 8.dp),
+        )
+
+        Text(
+            text = "Account name: ${tokenResult?.accountName}",
+            modifier = Modifier
+                .copyClickable(tokenResult?.accountName ?:"", clipboardManager, context)
+                .fillMaxWidth()
+                .padding(16.dp, 8.dp),
+        )
+        Text(
+            text = "User sourcedId: ${tokenResult?.sourcedId}",
+            modifier = Modifier
+                .copyClickable(tokenResult?.sourcedId ?:"", clipboardManager, context)
+                .fillMaxWidth()
+                .padding(16.dp, 8.dp),
+        )
+        Text(
+            text = "Endpoint: ${tokenResult?.endpointUrl}",
+            modifier = Modifier
+                .copyClickable(tokenResult?.endpointUrl ?:"", clipboardManager, context)
+                .fillMaxWidth()
+                .padding(16.dp, 8.dp),
+        )
+
+        Text(
+            text = "HTTP Proxy: ${if(clientPort != 0) "http://localhost:$clientPort/" else "binding..."}",
+            modifier = Modifier
+                .copyClickable(tokenResult?.accountName ?:"", clipboardManager, context)
+                .fillMaxWidth()
+                .padding(16.dp, 8.dp),
+        )
+
+
 
         Button(
             modifier = Modifier

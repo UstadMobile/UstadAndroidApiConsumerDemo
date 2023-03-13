@@ -18,10 +18,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ustadmobile.httpoveripc.client.HttpOverIpcClient
+import com.ustadmobile.httpoveripc.client.HttpOverIpcProxy
 import com.ustadmobile.ustadapiconsumer.ui.screens.AccountDetailScreen
 import com.ustadmobile.ustadapiconsumer.ui.screens.AccountListScreen
 import com.ustadmobile.ustadapiconsumer.ui.screens.StartScreen
 import com.ustadmobile.ustadapiconsumer.ui.theme.UstadApiConsumerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import rawhttp.core.RawHttp
 
 class MainActivity : ComponentActivity(), IpcClientBindActivity {
 
@@ -32,16 +37,29 @@ class MainActivity : ComponentActivity(), IpcClientBindActivity {
     override val ipcClient: HttpOverIpcClient?
         get() = mIpcClient
 
+    private var mHttpOverIpcProxy: HttpOverIpcProxy? = null
+
+    private val proxyPortFlow = MutableStateFlow(0)
+
+    override val httpPort: Flow<Int> = proxyPortFlow.asStateFlow()
+
     private val mConnection = object: ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            mIpcClient = HttpOverIpcClient(service)
+            mIpcClient = HttpOverIpcClient(service).also {
+                mHttpOverIpcProxy = HttpOverIpcProxy(it, RawHttp())
+                mHttpOverIpcProxy?.start()
+                proxyPortFlow.value = mHttpOverIpcProxy?.listeningPort ?: 0
+            }
+
             bound = true
         }
 
-        override fun onServiceDisconnected(p0: ComponentName?) {
+        override fun onServiceDisconnected(className: ComponentName) {
+            mHttpOverIpcProxy?.stop()
+            proxyPortFlow.value = 0
             mIpcClient?.close()
-            mIpcClient  = null
+            mIpcClient = null
             bound = false
         }
     }
@@ -53,23 +71,18 @@ class MainActivity : ComponentActivity(), IpcClientBindActivity {
                 AppNavHost()
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         Intent("oneroster").also { intent ->
             intent.`package` = "com.toughra.ustadmobile"
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         }
     }
-
-    override fun onStop() {
+    override fun onDestroy() {
         if(bound){
             unbindService(mConnection)
         }
 
-        super.onStop()
+        super.onDestroy()
     }
 }
 
