@@ -4,8 +4,11 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Parcelable
 import androidx.activity.result.contract.ActivityResultContract
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class GetTokenResult(
     val resultCode: Int,
     val accountName: String?,
@@ -13,7 +16,7 @@ data class GetTokenResult(
     val authToken: String?,
     val sourcedId: String?,
     val endpointUrl: String?,
-)
+): Parcelable
 
 class GetOfflineAuthActivityResultContract: ActivityResultContract<String?, GetTokenResult>() {
     /**
