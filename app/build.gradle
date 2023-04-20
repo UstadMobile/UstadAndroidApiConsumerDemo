@@ -56,8 +56,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.1.1'
     implementation "androidx.navigation:navigation-compose:$nav_version"
-    implementation "com.github.UstadMobile.httpoveripc:core:0.0.1m"
-    implementation "com.github.UstadMobile.httpoveripc:client:0.0.1m"
+    implementation "com.github.UstadMobile.httpoveripc:core:0.0.1n"
+    implementation "com.github.UstadMobile.httpoveripc:client:0.0.1n"
     implementation "org.nanohttpd:nanohttpd:2.3.1"
     implementation "com.athaydes.rawhttp:rawhttp-core:2.5.2"
     implementation "io.ktor:ktor-client-core:2.1.2"
